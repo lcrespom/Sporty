@@ -82,10 +82,8 @@ async function main() {
     await Deno.write(file.rid, encoder.encode('</Workouts>\n'))
     await Deno.close(file.rid)
     const workouts = await parseXML(tmpFile)
-    //Deno.remove(tmpFile)
+    Deno.remove(tmpFile)
     console.log(JSON.stringify(workouts, null, 2))
-    console.log('Check file ' + tmpFile)
-
 }
 
 
