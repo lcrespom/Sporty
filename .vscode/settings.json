@@ -3,6 +3,7 @@
     "deno.lint": true,
     "deno.unstable": true,
     "deno.suggest.imports.hosts": {
-        "https://raw.githubusercontent.com": false
+        "https://raw.githubusercontent.com": false,
+        "https://deno.land": true
     }
 }
