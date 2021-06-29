@@ -1,14 +1,14 @@
 import { existsSync } from 'https://deno.land/std@0.99.0/fs/mod.ts'
 import { SAXParser, ElementInfo, AttributeInfo } from 'https://deno.land/x/xmlp@v0.2.8/mod.ts'
 
-// See https://decipher.dev/deno-by-example/advanced-readline/
-import { readLine } from 'https://raw.githubusercontent.com/deepakshrma/deno-by-example/master/examples/file_reader.ts'
+import { readLine } from './file_reader.ts'
 
 
 type LineCallback = (line: string) => Promise<unknown>
 
 async function filterXML(xmlPath: string, lineCB: LineCallback) {
     console.log('Reading from ' + xmlPath + '...')
+    console.time('XML filter')
     const reader = await readLine(xmlPath)
     let inWorkout = false
     for await (const line of reader) {
@@ -18,6 +18,7 @@ async function filterXML(xmlPath: string, lineCB: LineCallback) {
             if (line.trimLeft().startsWith('</Workout>')) inWorkout = false
         }
     }
+    console.timeEnd('XML filter')
 }
 
 type XMLObject = { [key: string]: string | XMLObject[] }
