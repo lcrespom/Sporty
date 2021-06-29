@@ -7,8 +7,6 @@ import { readLine } from './file_reader.ts'
 type LineCallback = (line: string) => Promise<unknown>
 
 async function filterXML(xmlPath: string, lineCB: LineCallback) {
-    console.log('Reading from ' + xmlPath + '...')
-    console.time('XML filter')
     const reader = await readLine(xmlPath)
     let inWorkout = false
     for await (const line of reader) {
@@ -18,7 +16,6 @@ async function filterXML(xmlPath: string, lineCB: LineCallback) {
             if (line.trimLeft().startsWith('</Workout>')) inWorkout = false
         }
     }
-    console.timeEnd('XML filter')
 }
 
 type XMLObject = { [key: string]: string | XMLObject[] }
@@ -61,17 +58,7 @@ async function parseXML(xmlPath: string) {
     return workouts
 }
 
-
-async function main() {
-    if (Deno.args.length < 1) {
-        console.error('Error: missing argument - export.xml path')
-        Deno.exit()
-    }
-    const path = Deno.args[0]
-    if (!existsSync(path)) {
-        console.error(`Error: path "${path}" not found`)
-        Deno.exit();
-    }
+export async function readWorkouts(path: string): Promise<XMLObject[]> {
     const tmpFile = Deno.makeTempFileSync()
     const encoder = new TextEncoder()
     const file = await Deno.open(tmpFile, { write: true })
@@ -84,6 +71,25 @@ async function main() {
     await Deno.close(file.rid)
     const workouts = await parseXML(tmpFile)
     Deno.remove(tmpFile)
+    return workouts
+}
+
+export function getPathArg(): string {
+    if (Deno.args.length < 1) {
+        console.error('Error: missing argument - export.xml path')
+        Deno.exit()
+    }
+    const path = Deno.args[0]
+    if (!existsSync(path)) {
+        console.error(`Error: path "${path}" not found`)
+        Deno.exit();
+    }
+    return path
+}
+
+
+async function main() {
+    const workouts = await readWorkouts(getPathArg())
     console.log(JSON.stringify(workouts, null, 2))
 }
 
