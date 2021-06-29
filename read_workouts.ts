@@ -87,11 +87,3 @@ export function getPathArg(): string {
     return path
 }
 
-
-async function main() {
-    const workouts = await readWorkouts(getPathArg())
-    console.log(JSON.stringify(workouts, null, 2))
-}
-
-
-main()
