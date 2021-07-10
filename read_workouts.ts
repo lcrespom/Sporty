@@ -18,7 +18,7 @@ async function filterXML(xmlPath: string, lineCB: LineCallback) {
     }
 }
 
-type XMLObject = { [key: string]: string | XMLObject[] }
+export type XMLObject = { [key: string]: string | XMLObject[] }
 
 function attrs2obj(attrs: AttributeInfo[]): XMLObject {
     const obj: XMLObject = {}
