@@ -34,11 +34,10 @@ function json2csv(workouts: WorkoutSummary[]): string {
 
 async function main() {
     const workouts = await readWorkouts(getPathArg())
-    //console.log(JSON.stringify(workouts, null, 2))
     const poolWorkouts = workouts
         .filter(isSwimmingpoolWorkout)
         .map(makePoolWorkout)
-    //console.log(JSON.stringify(poolWorkouts, null, 2))
+    console.log(Object.keys(poolWorkouts[0]).join(','))
     console.log(json2csv(poolWorkouts))
 }
 
