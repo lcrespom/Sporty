@@ -2,18 +2,35 @@ import { readWorkouts, getPathArg } from './read_workouts.ts'
 import { XMLObject } from './read_workouts.ts'
 
 
-function isPoolSwimmingWorkout(w: XMLObject): boolean {
+function isSwimmingpoolWorkout(w: XMLObject): boolean {
     const meta = w.MetadataEntry as XMLObject[]
     return w.workoutActivityType == 'HKWorkoutActivityTypeSwimming'
         && meta.some(m => m.key == 'HKSwimmingLocationType' && m.value == '1')
 }
 
+function makePoolWorkout(w: XMLObject): Record<string, string | number> {
+    const events = w.WorkoutEvent as XMLObject[]
+    const laps = events
+        .filter(e => e.type == 'HKWorkoutEventTypeLap')
+        .length
+    return {
+        duration: (+w.duration) * 60,
+        distance: +w.totalDistance,
+        kcal: +w.totalEnergyBurned,
+        startDate: w.startDate as string,
+        endDate: w.endDate as string,
+        laps
+    }
+}
+
+
 async function main() {
     const workouts = await readWorkouts(getPathArg())
     //console.log(JSON.stringify(workouts, null, 2))
     const poolWorkouts = workouts
-        .filter(isPoolSwimmingWorkout)
-    console.log(poolWorkouts.length)
+        .filter(isSwimmingpoolWorkout)
+        .map(makePoolWorkout)
+    console.log(JSON.stringify(poolWorkouts, null, 2))
 }
 
 
