@@ -8,7 +8,9 @@ function isSwimmingpoolWorkout(w: XMLObject): boolean {
         && meta.some(m => m.key == 'HKSwimmingLocationType' && m.value == '1')
 }
 
-function makePoolWorkout(w: XMLObject): Record<string, string | number> {
+type WorkoutSummary = Record<string, string | number>
+
+function makePoolWorkout(w: XMLObject): WorkoutSummary {
     const events = w.WorkoutEvent as XMLObject[]
     const laps = events
         .filter(e => e.type == 'HKWorkoutEventTypeLap')
@@ -23,6 +25,12 @@ function makePoolWorkout(w: XMLObject): Record<string, string | number> {
     }
 }
 
+function json2csv(workouts: WorkoutSummary[]): string {
+    return workouts
+        .map(w => Object.values(w).join(','))
+        .join('\n')
+}
+    
 
 async function main() {
     const workouts = await readWorkouts(getPathArg())
@@ -30,7 +38,8 @@ async function main() {
     const poolWorkouts = workouts
         .filter(isSwimmingpoolWorkout)
         .map(makePoolWorkout)
-    console.log(JSON.stringify(poolWorkouts, null, 2))
+    //console.log(JSON.stringify(poolWorkouts, null, 2))
+    console.log(json2csv(poolWorkouts))
 }
 
 
